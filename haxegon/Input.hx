@@ -3,6 +3,7 @@ package haxegon;
 import starling.display.*;
 import starling.events.*;
 import openfl.events.TextEvent;
+import openfl.events.FocusEvent;
 import openfl.ui.Keyboard;
 import openfl.external.ExternalInterface;
 import starling.core.Starling;
@@ -131,7 +132,11 @@ class Input {
 		
 		starstage.addEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
 		starstage.addEventListener(KeyboardEvent.KEY_UP, handlekeyup);
-		flashstage.addEventListener(openfl.events.Event.DEACTIVATE, handledeactivate);
+		#if desktop
+			flashstage.addEventListener(FocusEvent.FOCUS_OUT, handledeactivate);
+		#else 
+			flashstage.addEventListener(openfl.events.Event.DEACTIVATE, handledeactivate);
+		#end
 		
 		clipboardbuffer = [""];
 		cut = false;
@@ -207,7 +212,11 @@ class Input {
 	private static function unload(){
 		starstage.removeEventListener(KeyboardEvent.KEY_DOWN, handlekeydown);
 		starstage.removeEventListener(KeyboardEvent.KEY_UP, handlekeyup);
-		flashstage.removeEventListener(openfl.events.Event.DEACTIVATE, handledeactivate);
+		#if desktop
+			flashstage.removeEventListener(FocusEvent.FOCUS_OUT, handledeactivate);
+		#else 
+			flashstage.removeEventListener(openfl.events.Event.DEACTIVATE, handledeactivate);
+		#end
 
 		#if flash
 			flashstage.removeEventListener(openfl.events.Event.CUT, handlecut);
@@ -376,10 +385,7 @@ class Input {
 	}
 	
 	private static function handledeactivate(e:openfl.events.Event) {
-		for(keycode in 0 ... numletters){				
-			current[keycode] = Keystate.notpressed;
-			keyheld[keycode] = -1;
-		}
+		reset();
 	}
 	
 	public static function getchar():String {

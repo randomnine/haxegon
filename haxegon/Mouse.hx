@@ -163,6 +163,12 @@ class Mouse{
     flashstage.addEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
     flashstage.addEventListener(MouseEvent.MOUSE_MOVE, mouseOver);
     flashstage.addEventListener(openfl.events.Event.MOUSE_LEAVE, mouseLeave);
+		
+		#if desktop
+			flashstage.addEventListener(FocusEvent.FOCUS_OUT, lostFocus);
+		#else
+			flashstage.addEventListener(Event.DEACTIVATE, lostFocus);
+		#end
 	}
 	
 	private static function unload(_starlingstage:starling.display.Stage, _flashstage:openfl.display.Stage) {
@@ -179,6 +185,12 @@ class Mouse{
     _flashstage.removeEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
     _flashstage.removeEventListener(MouseEvent.MOUSE_MOVE, mouseOver);
     _flashstage.removeEventListener(openfl.events.Event.MOUSE_LEAVE, mouseLeave);
+		
+		#if desktop
+			_flashstage.removeEventListener(FocusEvent.FOCUS_OUT, lostFocus);
+		#else
+			_flashstage.removeEventListener(Event.DEACTIVATE, lostFocus);
+		#end
 	}
 	
 	public static function show() {
@@ -327,5 +339,9 @@ class Mouse{
 		_middlecurrent = 0;
 		_middlelast = 0;
 		_middleheld = 0;
+	}
+	
+	private static function lostFocus(e:Event) : Void {
+		reset();
 	}
 }
